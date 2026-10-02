@@ -39,8 +39,13 @@ Oryginał (język angielski): [GenAI-Security-Project/GenAI-LLM-Top10](https://g
 
 - Nazwy frameworków, standardów, taksonomii i ich elementów (np. MITRE ATLAS, CWE, ASI, AISVS), tytuły publikacji w bibliografii oraz adresy URL pozostawiono w oryginalnym brzmieniu.
 - Nazwy klas ataków i technik utrwalone w branży (np. XSS, SSRF, slopsquatting, jailbreak) pozostawiono bez tłumaczenia, w razie potrzeby z polskim objaśnieniem przy pierwszym użyciu.
-- Fragmenty tekstu, które nie zmieniły się w stosunku do wydania 2025, przejęto z polskiego tłumaczenia wersji 2025.
+- Fragmenty tekstu, które nie zmieniły się w stosunku do wydania 2025, przejęto z polskiego tłumaczenia wersji 2025, a w wydaniu v1.1 ujednolicono je z glosariuszem projektu.
 - Terminologia jest spójna z polskimi tłumaczeniami OWASP ASVS 5.0 i OWASP API Security Top 10 tego samego autora.
+- Forma zwracania się do czytelnika: 2. osoba liczby pojedynczej i tryb rozkazujący, jak w polskim tłumaczeniu OWASP ASVS 5.0.
+- Bibliografia: tytuły, autorzy i adresy URL bez zmian; zlokalizowano wyłącznie elementy opisu w stylu APA (daty, „b.d.”, „Pobrano…”, oznaczenia typu źródła).
+- Kotwice linków wewnętrznych dostosowano do przetłumaczonych nagłówków (np. `#macierz-pokrycia`), aby odnośniki w dokumencie działały poprawnie.
+- Nazwy rozdziałów OWASP AISVS podano w brzmieniu oryginalnym wraz z polskim tłumaczeniem w nawiasie.
+- Teksty alternatywne i podpisy ilustracji przetłumaczono; same grafiki pozostają w wersji angielskiej.
 
 ## Poprzednie wydanie
 
