@@ -50,7 +50,7 @@ Atakujący wykorzystują podatności we frameworkach do serwowania modeli LLM (v
 
 #### 1. Ograniczanie częstotliwości żądań i walidacja rozmiaru danych wejściowych
 
-Zastosuj ograniczenie szybkości i limity użytkowników, aby ograniczyć liczbę żądań, które pojedynczy podmiot źródłowy może wysłać w danym okresie czasu. Nie poprzestawaj na limitach żądań na sekundę — egzekwuj limity liczby tokenów na minutę, tokenów na dzień oraz szacunkowego kosztu żądania. Stosuj wstępne szacowanie liczby tokenów, aby odrzucać żądania przed rozpoczęciem wnioskowania. Obejmuje to walidację zapewniającą, że dane wejściowe nie przekraczają rozsądnych limitów rozmiaru.
+Zastosuj ograniczanie częstotliwości żądań i limity użytkowników, aby ograniczyć liczbę żądań, które pojedynczy podmiot źródłowy może wysłać w danym okresie czasu. Nie poprzestawaj na limitach żądań na sekundę — egzekwuj limity liczby tokenów na minutę, tokenów na dzień oraz szacunkowego kosztu żądania. Stosuj wstępne szacowanie liczby tokenów, aby odrzucać żądania przed rozpoczęciem wnioskowania. Obejmuje to walidację zapewniającą, że dane wejściowe nie przekraczają rozsądnych limitów rozmiaru.
 
 #### 2. Twarde limity wydatków
 
@@ -60,13 +60,13 @@ Ustal nieprzekraczalne pułapy budżetowe dla każdego klucza API, użytkownika,
 
 Monitoruj i zarządzaj alokacją zasobów w sposób dynamiczny, aby zapobiec nadmiernemu zużyciu zasobów przez pojedynczego użytkownika lub żądanie.
 
-#### 4. Techniki piaskownicy
+#### 4. Techniki sandboxingu
 
 Ogranicz dostęp LLM do zasobów sieciowych, usług wewnętrznych i interfejsów API. Ograniczenie zasobów, do których aplikacja może sięgać, zmniejsza możliwość wyprowadzenia przez atakującego wyodrębnionych informacji o modelu lub danych do zewnętrznego miejsca docelowego.
 
-#### 5. Łagodna degradacja
+#### 5. Kontrolowana degradacja
 
-Zaprojektowanie systemu tak, aby w przypadku dużego obciążenia ulegał łagodnej degradacji, zachowując częściową funkcjonalność zamiast całkowitej awarii.
+Zaprojektuj system tak, aby w przypadku dużego obciążenia ulegał kontrolowanej degradacji (graceful degradation), zachowując częściową funkcjonalność zamiast całkowitej awarii.
 
 #### 6. Ograniczenie działań w kolejce i solidna skalowalność
 
@@ -108,7 +108,7 @@ Atakujący generuje nadmierną liczbę operacji, aby wykorzystać model płatno�
 
 #### Scenariusz nr 5: Replikacja modelu funkcjonalnego
 
-Atakujący wykorzystuje interfejs API LLM do generowania syntetycznych danych szkoleniowych i dostosowuje inny model, tworząc funkcjonalny odpowiednik i omijając tradycyjne ograniczenia związane z ekstrakcją modelu.
+Atakujący wykorzystuje interfejs API LLM do generowania syntetycznych danych treningowych i dostraja inny model, tworząc funkcjonalny odpowiednik i omijając tradycyjne ograniczenia związane z ekstrakcją modelu.
 
 #### Scenariusz nr 6: Zaburzenia w obrazach wejściowych LVLM
 

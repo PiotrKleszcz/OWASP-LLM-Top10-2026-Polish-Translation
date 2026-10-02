@@ -2,15 +2,15 @@
 
 ### Opis
 
-Nieprawidłowe przetwarzanie wyników odnosi się konkretnie do niewystarczającej walidacji, oczyszczania i przetwarzania wyników generowanych przez duże modele językowe przed przekazaniem ich do innych komponentów i systemów. Ponieważ treści generowane przez LLM mogą być kontrolowane za pomocą poleceń, zachowanie to jest podobne do zapewnienia użytkownikom pośredniego dostępu do dodatkowych funkcji.
+Nieprawidłowe przetwarzanie wyników odnosi się konkretnie do niewystarczającej walidacji, sanityzacji i przetwarzania wyników generowanych przez duże modele językowe przed przekazaniem ich do innych komponentów i systemów. Ponieważ treści generowane przez LLM mogą być kontrolowane za pomocą poleceń, zachowanie to jest podobne do zapewnienia użytkownikom pośredniego dostępu do dodatkowych funkcji.
 Nieprawidłowe przetwarzanie wyników dotyczy niebezpiecznego wykorzystania wyników modelu przed przekazaniem ich dalej, natomiast LLM07:2026 Dezinformacja dotyczy wyników nieprawidłowych lub wprowadzających w błąd. Walidację i sanityzację danych wejściowych modelu omawia LLM01:2026 Wstrzyknięcie polecenia.
-Wykorzystanie luki w zabezpieczeniach związanej z nieprawidłowym przetwarzaniem danych wyjściowych może skutkować atakami XSS i CSRF w przeglądarkach internetowych, a także atakami SSRF, eskalacją uprawnień lub zdalnym wykonaniem kodu w systemach zaplecza.
-Następujące warunki mogą zwiększyć wpływ tej luki w zabezpieczeniach:
+Wykorzystanie podatności związanej z nieprawidłowym przetwarzaniem wyników może skutkować atakami XSS i CSRF w przeglądarkach internetowych, a także atakami SSRF, eskalacją uprawnień lub zdalnym wykonaniem kodu w systemach backendowych.
+Następujące warunki mogą zwiększyć wpływ tej podatności:
 
 * Nadmierne uprawnienia aplikacyjne przyznane LLM, umożliwiające eskalację uprawnień lub zdalne wykonanie kodu.
 * Podatność na pośrednie wstrzyknięcie polecenia, które może umożliwić atakującemu uzyskanie uprzywilejowanego dostępu do środowiska docelowego użytkownika.
 * Niezwalidowane dane wejściowe z narzędzi stron trzecich.
-* Brak kodowania wyników właściwego dla danego kontekstu (np. HTML, JavaScript, SQL).
+* Brak kodowania danych wyjściowych właściwego dla danego kontekstu (np. HTML, JavaScript, SQL).
 * Niewystarczające monitorowanie i rejestrowanie wyników LLM.
 * Brak ograniczania częstotliwości żądań lub wykrywania anomalii w zakresie korzystania z LLM.
 * Miejsca docelowe w postaci terminala, logów lub IDE, które renderują wyniki modelu bez neutralizowania znaków sterujących, takich jak sekwencje ucieczki ANSI.
@@ -21,14 +21,14 @@ Następujące warunki mogą zwiększyć wpływ tej luki w zabezpieczeniach:
 1. Wyniki LLM są wprowadzane bezpośrednio do powłoki systemowej lub podobnej funkcji, takiej jak exec lub eval, co powoduje zdalne wykonanie kodu.
 2. LLM generuje kod JavaScript lub Markdown i zwraca go użytkownikowi. Kod jest następnie interpretowany przez przeglądarkę, co powoduje atak XSS.
 3. Zapytania SQL generowane przez LLM są wykonywane bez odpowiedniej parametryzacji, co prowadzi do wstrzyknięcia kodu SQL.
-4. Wyniki LLM są wykorzystywane do tworzenia ścieżek plików bez odpowiedniej sanitizacji, co może potencjalnie skutkować lukami w zabezpieczeniach związanych z przechodzeniem ścieżek.
-5. Treści generowane przez LLM są wykorzystywane w szablonach wiadomości e-mail bez odpowiedniego filtrowania lub oczyszczania, co może potencjalnie prowadzić do ataków phishingowych.
+4. Wyniki LLM są wykorzystywane do tworzenia ścieżek plików bez odpowiedniej sanityzacji, co może potencjalnie skutkować podatnościami typu path traversal.
+5. Treści generowane przez LLM są wykorzystywane w szablonach wiadomości e-mail bez odpowiedniego filtrowania lub sanityzacji, co może potencjalnie prowadzić do ataków phishingowych.
 6. Wynik LLM zawierający sekwencje ucieczki ANSI lub inne znaki sterujące zostaje zapisany w terminalu, przeglądarce logów lub panelu IDE, które je interpretują, umożliwiając podszywanie się wizualne (visual spoofing), przejęcie schowka (np. OSC 52) lub wykorzystanie znanych podatności emulatorów terminala (Rehberger, 2024b).
 7. Interfejs czatu automatycznie renderuje obrazy w formacie Markdown lub podglądy linków, do których odwołują się wyniki modelu, co pozwala atakującemu kontrolującemu część kontekstu modelu na eksfiltrację danych z rozmowy za pośrednictwem nazwy hosta lub ciągu zapytania w adresie URL obrazu (Rehberger, 2024a).
 
 ### Strategie zapobiegania i ograniczania skutków
 
-1. Traktuj model jak każdego innego użytkownika, stosując podejście oparte na zerowym zaufaniu i stosuj odpowiednią walidację danych wejściowych w odpowiedziach pochodzących z modelu do funkcji zaplecza.
+1. Traktuj model jak każdego innego użytkownika, stosując podejście oparte na zerowym zaufaniu i stosuj odpowiednią walidację danych wejściowych w odpowiedziach pochodzących z modelu do funkcji backendowych.
 2. Postępuj zgodnie z wytycznymi OWASP ASVS (Application Security Verification Standard), aby zapewnić skuteczną walidację i sanityzację danych wejściowych (OWASP, b.d.).
 3. Koduj dane wyjściowe modelu z powrotem do użytkowników, aby ograniczyć niepożądane wykonywanie kodu przez JavaScript lub Markdown. OWASP ASVS zawiera szczegółowe wytyczne dotyczące kodowania danych wyjściowych.
 4. Wdrażaj kodowanie danych wyjściowych z uwzględnieniem kontekstu, w zależności od miejsca wykorzystania danych wyjściowych LLM (np. kodowanie HTML dla treści internetowych, kodowanie JavaScript dla kontekstów skryptów w przeglądarce).
@@ -42,7 +42,7 @@ Następujące warunki mogą zwiększyć wpływ tej luki w zabezpieczeniach:
 
 #### Scenariusz nr 1
 
-Aplikacja wykorzystuje narzędzie LLM do generowania odpowiedzi dla funkcji chatbota. Narzędzie oferuje również szereg funkcji administracyjnych dostępnych dla innego uprzywilejowanego LLM. LLM ogólnego przeznaczenia przekazuje swoją odpowiedź bezpośrednio, bez odpowiedniej walidacji danych wyjściowych, do narzędzia, powodując jego zamknięcie w celu konserwacji.
+Aplikacja wykorzystuje narzędzie LLM do generowania odpowiedzi dla funkcji chatbota. Narzędzie oferuje również szereg funkcji administracyjnych dostępnych dla innego uprzywilejowanego LLM. LLM ogólnego przeznaczenia przekazuje swoją odpowiedź bezpośrednio, bez odpowiedniej walidacji wyników, do narzędzia, powodując jego zamknięcie w celu konserwacji.
 
 #### Scenariusz nr 2
 
@@ -54,11 +54,11 @@ LLM umożliwia użytkownikom tworzenie zapytań SQL do źródłowej bazy danych 
 
 #### Scenariusz nr 4
 
-Aplikacja internetowa wykorzystuje LLM do generowania treści na podstawie poleceń tekstowych użytkownika bez oczyszczania danych wyjściowych. Atakujący może przesłać spreparowane polecenie, które spowoduje, że LLM zwróci nieoczyszczoną zawartość JavaScript, co doprowadzi do ataku XSS po wyrenderowaniu w przeglądarce ofiary. Atak ten był możliwy dzięki niewystarczającej walidacji i niewłaściwemu kodowaniu wyników modelu.
+Aplikacja internetowa wykorzystuje LLM do generowania treści na podstawie poleceń tekstowych użytkownika bez sanityzacji wyników. Atakujący może przesłać spreparowane polecenie, które spowoduje, że LLM zwróci niesanityzowaną zawartość JavaScript, co doprowadzi do ataku XSS po wyrenderowaniu w przeglądarce ofiary. Atak ten był możliwy dzięki niewystarczającej walidacji i niewłaściwemu kodowaniu danych wyjściowych modelu.
 
 #### Scenariusz nr 5
 
-LLM jest używany do generowania dynamicznych szablonów wiadomości e-mail na potrzeby kampanii marketingowej. Atakujący manipuluje LLM, aby umieścić złośliwy kod JavaScript w treści wiadomości e-mail. Jeśli aplikacja nie oczyści prawidłowo danych wyjściowych LLM, może to doprowadzić do ataków XSS na odbiorców, którzy wyświetlają wiadomości e-mail w podatnych na ataki klientach poczty elektronicznej.
+LLM jest używany do generowania dynamicznych szablonów wiadomości e-mail na potrzeby kampanii marketingowej. Atakujący manipuluje LLM, aby umieścić złośliwy kod JavaScript w treści wiadomości e-mail. Jeśli aplikacja nie przeprowadzi prawidłowej sanityzacji wyników LLM, może to doprowadzić do ataków XSS na odbiorców, którzy wyświetlają wiadomości e-mail w podatnych na ataki klientach poczty elektronicznej.
 
 #### Scenariusz nr 6
 
